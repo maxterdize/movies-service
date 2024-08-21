@@ -16,8 +16,25 @@ public class CodeChallengeController {
 
     private final MoviesService moviesService;
 
-    @GetMapping("/movies/title/{title}")
+    @PostMapping(path = "/movies", consumes = "application/json")
+    public ResponseEntity<Movie> saveMovie(@RequestBody Movie movie) {
+        moviesService.saveMovie(movie);
+        return new ResponseEntity<>(movie, HttpStatus.CREATED);
+    }
+
+    @PostMapping(path = "/movies/all", consumes = "application/json")
+    public ResponseEntity<List<Movie>> saveMovies(@RequestBody List<Movie> movies) {
+        moviesService.saveMovies(movies);
+        return new ResponseEntity<>(movies, HttpStatus.CREATED);
+    }
+
+    @GetMapping(path = "/movies/title/{title}", produces = "application/json")
     public ResponseEntity<List<Movie>> getMoviesByTitle(@PathVariable String title) {
         return new ResponseEntity<>(moviesService.getMoviesByTitle(title), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/movies/imdbId/{imdbId}", produces = "application/json")
+    public ResponseEntity<Movie> getMovieByImdbId(@PathVariable String imdbId) {
+        return new ResponseEntity<>(moviesService.getMovieByIbmdId(imdbId), HttpStatus.OK);
     }
 }

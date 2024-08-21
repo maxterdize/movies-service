@@ -37,7 +37,7 @@ public class MoviesService {
     }
 
     @Transactional
-    public void saveMovies(Set<Movie> movies) {
+    public void saveMovies(List<Movie> movies) {
         try {
             movieRepository.saveAll(movies);
         } catch (Exception e) {
