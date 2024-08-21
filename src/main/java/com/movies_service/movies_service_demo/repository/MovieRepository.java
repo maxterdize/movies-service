@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     Movie findByImdbId(String imdbId);
+    boolean existsByImdbID(String imdbId);
 }

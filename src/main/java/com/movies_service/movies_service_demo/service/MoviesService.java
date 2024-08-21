@@ -21,7 +21,6 @@ public class MoviesService {
     private final MovieRepository movieRepository;
 
 
-    @Transactional
     public List<Movie> getMoviesByTitle(String title) {
         List<Movie> movies = maverikClient.getMoviesByTitle(title);
         if (movies == null) {
@@ -55,9 +54,17 @@ public class MoviesService {
     }
 
     public Movie getMovieByIbmdId(String imdbId) {
-        Movie movie = movieRepository.findByImdbId(imdbId);
+        if (movieRepository.existsByImdbID(imdbId)){
+            return movieRepository.findByImdbId(imdbId);
+        }
+        Movie movie = maverikClient.getMoviesByImdbId(imdbId);
         if (movie == null) {
             throw new MovieNotFoundException("No movie found for imdbId: " + imdbId);
+        }
+        try {
+            movieRepository.save(movie);
+        } catch (Exception e) {
+            throw new RepositoryTransactionException("Error saving movie with imdbId: " + imdbId, e);
         }
         return movie;
     }
