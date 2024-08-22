@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -55,7 +53,7 @@ public class MoviesService {
 
     public Movie getMovieByIbmdId(String imdbId) {
         if (movieRepository.existsByImdbID(imdbId)){
-            return movieRepository.findByImdbId(imdbId);
+            return movieRepository.findByImdbID(imdbId);
         }
         Movie movie = maverikClient.getMoviesByImdbId(imdbId);
         if (movie == null) {
