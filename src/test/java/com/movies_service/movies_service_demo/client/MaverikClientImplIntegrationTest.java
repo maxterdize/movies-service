@@ -7,16 +7,17 @@ import org.junit.jupiter.api.Test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.actuate.autoconfigure.wavefront.WavefrontProperties;
+import org.springframework.boot.autoconfigure.web.client.RestTemplateBuilderConfigurer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,11 +25,12 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 
-@SpringBootTest
+@ContextConfiguration(classes = WavefrontProperties.Application.class)
 public class MaverikClientImplIntegrationTest {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private String MAVERIK_BASE_URL = "https://gateway.maverik.com";
     private String GET_MOVIE_BY_TITLE_PATH = "/movie/api/movie/title/";
     private String GET_MOVIE_BY_IMDB_ID_PATH = "/movie/api/movie/";
 
@@ -41,12 +43,16 @@ public class MaverikClientImplIntegrationTest {
 
     private final Gson gson = new Gson();
 
-    @Autowired
     private RestTemplateBuilder restTemplateBuilder;
+    RestTemplate restTemplate;
+    private RestTemplateBuilderConfigurer restTemplateBuilderConfigurer = new RestTemplateBuilderConfigurer();
 
     @BeforeEach
     public void setUp() {
-        RestTemplate restTemplate = restTemplateBuilder.build();
+        restTemplateBuilder = restTemplateBuilderConfigurer
+                .configure(new RestTemplateBuilder())
+                .uriTemplateHandler(new DefaultUriBuilderFactory(MAVERIK_BASE_URL));
+        restTemplate= restTemplateBuilder.build();
         maverikClientImpl = new MaverikClientImpl(restTemplateBuilder);
         server = MockRestServiceServer.createServer(restTemplate);
     }
