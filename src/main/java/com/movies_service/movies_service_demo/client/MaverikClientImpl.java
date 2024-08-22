@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,18 +27,22 @@ public class MaverikClientImpl implements MaverikClient {
     @Override
     public List<Movie> getMoviesByTitle(String title) {
         RestTemplate restTemplate = restTemplateBuilder.build();
-        String uri = UriComponentsBuilder.fromPath(GET_MOVIE_BY_TITLE_PATH + title)
+        String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);
+        String uri = UriComponentsBuilder.fromPath(GET_MOVIE_BY_TITLE_PATH + encodedTitle)
                 .queryParam("source", "web")
                 .buildAndExpand(title)
                 .encode()
                 .toUriString();
-        return Optional.ofNullable(restTemplate.getForEntity(uri, List.class).getBody()).orElseThrow();
+        return Optional.ofNullable(restTemplate.getForEntity(uri, Movie[].class).getBody())
+                .map(Arrays::asList)
+                .orElseThrow();
     }
 
     @Override
     public Movie getMoviesByImdbId(String imdbId) {
         RestTemplate restTemplate = restTemplateBuilder.build();
-        String uri = UriComponentsBuilder.fromPath(GET_MOVIE_BY_IMDB_ID_PATH + imdbId)
+        String encodedImbdId = URLEncoder.encode(imdbId, StandardCharsets.UTF_8);
+        String uri = UriComponentsBuilder.fromPath(GET_MOVIE_BY_IMDB_ID_PATH + encodedImbdId)
                 .queryParam("source", "web")
                 .buildAndExpand(imdbId)
                 .encode()

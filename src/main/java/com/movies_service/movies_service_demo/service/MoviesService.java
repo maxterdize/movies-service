@@ -20,7 +20,7 @@ public class MoviesService {
 
 
     public List<Movie> getMoviesByTitle(String title) {
-        List<Movie> movies = maverikClient.getMoviesByTitle(title);
+        List<Movie> movies = (List<Movie>) maverikClient.getMoviesByTitle(title);
         if (movies == null) {
             throw new MovieNotFoundException("No movies found for title: " + title);
         }
