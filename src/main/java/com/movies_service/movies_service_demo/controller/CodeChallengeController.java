@@ -16,13 +16,13 @@ public class CodeChallengeController {
 
     private final MoviesService moviesService;
 
-    @PostMapping(path = "/movies", consumes = "application/json")
+    @PostMapping(path = "/movies/save", consumes = "application/json")
     public ResponseEntity<Movie> saveMovie(@RequestBody Movie movie) {
         moviesService.saveMovie(movie);
         return new ResponseEntity<>(movie, HttpStatus.CREATED);
     }
 
-    @PostMapping(path = "/movies/all", consumes = "application/json")
+    @PostMapping(path = "/movies/saveAll", consumes = "application/json")
     public ResponseEntity<List<Movie>> saveMovies(@RequestBody List<Movie> movies) {
         moviesService.saveMovies(movies);
         return new ResponseEntity<>(movies, HttpStatus.CREATED);
